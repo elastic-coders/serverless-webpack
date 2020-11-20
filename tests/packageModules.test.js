@@ -12,7 +12,7 @@ const Configuration = require('../lib/Configuration');
 // Mocks
 const fsMockFactory = require('./mocks/fs.mock');
 const globMockFactory = require('./mocks/glob.mock');
-const archiverMockFactory = require('./mocks/archiver.mock');
+const bestzipMockFactory = require('./mocks/bestzip.mock');
 
 chai.use(require('chai-as-promised'));
 chai.use(require('sinon-chai'));
@@ -28,7 +28,7 @@ describe('packageModules', () => {
   // Mocks
   let fsMock;
   let globMock;
-  let archiverMock;
+  let bestzipMock;
   // Serverless stubs
   let writeFileDirStub;
   let getAllFunctionsStub;
@@ -41,11 +41,11 @@ describe('packageModules', () => {
     sandbox.usingPromise(BbPromise);
 
     fsMock = fsMockFactory.create(sandbox);
-    archiverMock = archiverMockFactory.create(sandbox);
+    bestzipMock = bestzipMockFactory.create(sandbox);
     globMock = globMockFactory.create(sandbox);
 
     mockery.enable({ warnOnUnregistered: false });
-    mockery.registerMock('archiver', archiverMock);
+    mockery.registerMock('bestzip', bestzipMock);
     mockery.registerMock('fs', fsMock);
     mockery.registerMock('glob', globMock);
     baseModule = require('../lib/packageModules');
@@ -92,7 +92,7 @@ describe('packageModules', () => {
       module.compileStats = { stats: [] };
       return expect(module.packageModules()).to.be.fulfilled.then(() =>
         BbPromise.all([
-          expect(archiverMock.create).to.not.have.been.called,
+          expect(bestzipMock).to.not.have.been.called,
           expect(writeFileDirStub).to.not.have.been.called,
           expect(fsMock.createWriteStream).to.not.have.been.called,
           expect(globMock.sync).to.not.have.been.called
@@ -104,7 +104,7 @@ describe('packageModules', () => {
       module.skipCompile = true;
       return expect(module.packageModules()).to.be.fulfilled.then(() =>
         BbPromise.all([
-          expect(archiverMock.create).to.not.have.been.called,
+          expect(bestzipMock).to.not.have.been.called,
           expect(writeFileDirStub).to.not.have.been.called,
           expect(fsMock.createWriteStream).to.not.have.been.called,
           expect(globMock.sync).to.not.have.been.called
